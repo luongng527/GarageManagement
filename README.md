@@ -116,7 +116,7 @@ AutoGara giải quyết các vấn đề trên với chi phí triển khai bằn
 - 🔐 HTTPS + SSL bắt buộc trên mọi kết nối
 
 ---
-
+<details>
 ## 🚀 Cài đặt và chạy local
 
 ### Yêu cầu
@@ -167,6 +167,412 @@ open http://localhost:3000
 > ⚠️ **Free tier:** Backend tự ngủ sau 15 phút không có request. Lần đầu truy cập cần chờ ~60 giây để Render khởi động lại — đây là giới hạn của gói miễn phí, không phải lỗi.
 
 ---
+</details>
+## 🚀 Cài đặt và chạy Local
+
+### Yêu cầu
+
+- Git
+- Node.js ≥ 18
+- npm
+- PostgreSQL hoặc tài khoản [Neon.tech](https://neon.tech) để sử dụng PostgreSQL trên Cloud
+
+> Khuyến nghị sử dụng **Neon** để không cần cài PostgreSQL trực tiếp trên máy.
+
+---
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/24520823-KFLora/GarageManagement.git
+cd GarageManagement
+```
+
+Cấu trúc chính của project:
+
+```text
+GarageManagement/
+├── backend/
+│   ├── package.json
+│   ├── package-lock.json
+│   └── server.js
+│
+├── frontend/
+│   ├── index.html
+│   └── script.js
+│
+├── .gitignore
+└── README.md
+```
+
+---
+
+### 2. Cài đặt Backend
+
+`package.json` của Node.js nằm trong thư mục `backend`, vì vậy cần chuyển vào thư mục này trước khi chạy `npm install`:
+
+```bash
+cd backend
+npm install
+```
+
+Sau khi hoàn tất, npm sẽ tạo thư mục:
+
+```text
+backend/node_modules/
+```
+
+> Không chạy `npm install` ở thư mục gốc `GarageManagement`.
+
+---
+
+### 3. Tạo PostgreSQL Database bằng Neon
+
+Nếu sử dụng Neon:
+
+1. Truy cập [Neon](https://neon.tech)
+2. Đăng nhập hoặc tạo tài khoản
+3. Tạo một Project mới
+4. Mở phần **Connect**
+5. Copy **Connection String**
+
+Connection String sẽ có dạng:
+
+```text
+postgresql://username:password@hostname/database?sslmode=require
+```
+
+Ví dụ:
+
+```text
+postgresql://neondb_owner:password@ep-example.neon.tech/neondb?sslmode=require
+```
+
+> ⚠️ Không chia sẻ Connection String vì nó chứa thông tin đăng nhập database.
+
+---
+
+### 4. Tạo file `.env`
+
+Tạo file:
+
+```text
+backend/.env
+```
+
+Nội dung:
+
+```env
+DATABASE_URL=YOUR_NEON_CONNECTION_STRING
+JWT_SECRET=your-secret-key-at-least-32-characters
+NODE_ENV=development
+PORT=3000
+```
+
+Trong đó:
+
+- `DATABASE_URL`: Connection String lấy từ Neon
+- `JWT_SECRET`: chuỗi bí mật dùng để ký JWT, nên dài ít nhất 32 ký tự
+- `NODE_ENV`: đặt `development` khi chạy local
+- `PORT`: cổng backend local, mặc định `3000`
+
+Ví dụ cấu trúc sau khi tạo:
+
+```text
+GarageManagement/
+├── backend/
+│   ├── .env
+│   ├── node_modules/
+│   ├── package.json
+│   ├── package-lock.json
+│   └── server.js
+└── frontend/
+```
+
+> ⚠️ File `.env` chứa thông tin nhạy cảm và **không được commit lên GitHub**.
+
+Đảm bảo `.gitignore` có:
+
+```gitignore
+.env
+backend/.env
+node_modules/
+backend/node_modules/
+```
+
+---
+
+### 5. Chạy Backend Local
+
+Tại thư mục:
+
+```text
+GarageManagement/backend
+```
+
+Với Node.js hỗ trợ `--env-file`, chạy:
+
+```bash
+node --env-file=.env server.js
+```
+
+Nếu kết nối database thành công, terminal sẽ hiển thị tương tự:
+
+```text
+✅ Database sẵn sàng
+🚗 AutoCare API running on port 3000
+```
+
+Server tự động chạy `initDB()` khi khởi động để:
+
+- Kết nối PostgreSQL
+- Tạo các bảng cần thiết nếu chưa tồn tại
+- Tạo dữ liệu khởi tạo cần thiết
+- Tạo tài khoản admin mặc định nếu chưa có
+
+Kiểm tra backend tại:
+
+```text
+http://localhost:3000
+```
+
+Nếu hoạt động, API sẽ trả về trạng thái server đang chạy.
+
+> Giữ terminal backend đang chạy trong khi sử dụng frontend local.
+
+---
+
+### 6. Chạy Frontend Local
+
+Mở terminal mới:
+
+```bash
+cd GarageManagement/frontend
+```
+
+Trong `frontend/script.js`, khi muốn sử dụng backend local, đặt:
+
+```javascript
+const API = 'http://localhost:3000';
+```
+
+Frontend sử dụng HTML + JavaScript thuần nên **không cần chạy `npm install`**.
+
+Có thể mở trực tiếp:
+
+```text
+frontend/index.html
+```
+
+Hoặc trên Windows Git Bash:
+
+```bash
+start index.html
+```
+
+Sau đó đăng nhập và sử dụng hệ thống.
+
+---
+
+## ☁️ Deploy Online bằng Render + Neon
+
+Kiến trúc khi deploy:
+
+```text
+User
+  │
+  ▼
+Render Static Site
+Frontend (HTML + JavaScript)
+  │
+  ▼
+Render Web Service
+Backend (Node.js + Express)
+  │
+  ▼
+Neon
+PostgreSQL
+```
+
+### 1. Chuẩn bị GitHub
+
+Fork repository về tài khoản GitHub của bạn hoặc sử dụng repository riêng.
+
+Đảm bảo các file nhạy cảm không được commit:
+
+```text
+backend/.env
+backend/node_modules/
+```
+
+Push source code lên GitHub:
+
+```bash
+git add .
+git commit -m "Prepare project for deployment"
+git push origin main
+```
+
+> ⚠️ Luôn kiểm tra `git status` trước khi commit để chắc chắn `.env` không được đưa lên GitHub.
+
+---
+
+## 🖥️ Deploy Backend lên Render
+
+### 2. Tạo Web Service
+
+Truy cập [Render](https://render.com), đăng nhập và kết nối GitHub.
+
+Chọn:
+
+```text
+New
+→ Web Service
+→ Chọn repository GarageManagement
+```
+
+Cấu hình:
+
+```text
+Branch: main
+Root Directory: backend
+Build Command: npm install
+Start Command: node server.js
+```
+
+### 3. Environment Variables
+
+Thêm các biến:
+
+```text
+DATABASE_URL = YOUR_NEON_CONNECTION_STRING
+JWT_SECRET   = YOUR_SECRET_KEY
+NODE_ENV     = production
+```
+
+Không cần tự đặt `PORT` trên Render vì Render sẽ cung cấp biến `PORT` cho Web Service.
+
+Sau đó chọn **Deploy Web Service**.
+
+Nếu thành công, log sẽ hiển thị tương tự:
+
+```text
+✅ Database sẵn sàng
+🚗 AutoCare API running on port 10000
+==> Your service is live
+```
+
+Render sẽ cấp URL backend dạng:
+
+```text
+https://your-backend-name.onrender.com
+```
+
+Kiểm tra URL này trên trình duyệt trước khi tiếp tục.
+
+---
+
+## 🌐 Kết nối Frontend với Backend Render
+
+Sau khi backend đã deploy thành công, mở:
+
+```text
+frontend/script.js
+```
+
+Thay:
+
+```javascript
+const API = 'http://localhost:3000';
+```
+
+bằng URL backend Render:
+
+```javascript
+const API = 'https://your-backend-name.onrender.com';
+```
+
+Sau đó commit và push:
+
+```bash
+git add frontend/script.js
+git commit -m "Connect frontend to Render backend"
+git push origin main
+```
+
+---
+
+## 🌍 Deploy Frontend lên Render
+
+Trên Render chọn:
+
+```text
+New
+→ Static Site
+→ Chọn repository GarageManagement
+```
+
+Cấu hình:
+
+```text
+Branch: main
+Root Directory: frontend
+Build Command: để trống
+Publish Directory: .
+```
+
+Frontend không cần Environment Variables vì API backend đã được cấu hình trong `script.js`.
+
+Chọn:
+
+```text
+Deploy Static Site
+```
+
+Nếu thành công, Render sẽ hiển thị:
+
+```text
+Your site is live 🎉
+```
+
+và cung cấp URL frontend dạng:
+
+```text
+https://your-frontend-name.onrender.com
+```
+
+Đây là URL chính để người dùng truy cập hệ thống.
+
+---
+
+## 🔄 Cập nhật Website sau khi Deploy
+
+Sau khi đã kết nối GitHub với Render, quy trình cập nhật source code:
+
+```bash
+git add .
+git commit -m "Update project"
+git push origin main
+```
+
+Render sẽ tự động phát hiện commit mới trên branch `main` và triển khai lại service tương ứng.
+
+Thông thường:
+
+- Thay đổi trong `backend/` → Web Service backend được deploy lại
+- Thay đổi trong `frontend/` → Static Site frontend được deploy lại
+
+---
+
+## ⚠️ Lưu ý
+
+- Không commit `.env` lên GitHub.
+- Không chia sẻ `DATABASE_URL`, password Neon hoặc `JWT_SECRET`.
+- Frontend và backend là hai phần deploy riêng trên Render.
+- Backend sử dụng Neon PostgreSQL nên không cần cài PostgreSQL local nếu sử dụng Neon.
+- Khi chạy local, backend mặc định sử dụng `http://localhost:3000`.
+- Khi chạy online, frontend phải trỏ `API` đến URL Web Service của Render.
+- Nếu sử dụng gói Render có cơ chế sleep khi không hoạt động, lần truy cập đầu tiên sau một thời gian có thể cần chờ backend khởi động.
 
 ## 📁 Cấu trúc mã nguồn
 
