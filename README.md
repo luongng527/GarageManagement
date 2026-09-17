@@ -12,7 +12,7 @@
 
 **Ứng dụng web quản lý toàn diện cho gara ô tô vừa và nhỏ tại Việt Nam**
 
-[Demo trực tuyến](https://se104gara.netlify.app) · [Báo cáo đồ án](#) · [Hướng dẫn cài đặt](#-cài-đặt-và-chạy-local)
+[Demo trực tuyến](https://garage-management-frontend-wnyv.onrender.com) · [Báo cáo đồ án](#) · [Hướng dẫn cài đặt](#-cài-đặt-và-chạy-local)
 
 </div>
 
@@ -127,7 +127,7 @@ AutoGara giải quyết các vấn đề trên với chi phí triển khai bằn
 
 ```bash
 # 1. Clone repo
-git clone https://github.com/24520823-KFLora/GarageManagement.git
+git clone https://github.com/luongng527/GarageManagement.git
 cd GarageManagement
 
 # 2. Cài dependency
@@ -184,7 +184,7 @@ open http://localhost:3000
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/24520823-KFLora/GarageManagement.git
+git clone https://github.com/luongng527/GarageManagement.git
 cd GarageManagement
 ```
 
