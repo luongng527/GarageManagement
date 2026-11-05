@@ -132,7 +132,7 @@ PORT=3000
 
 **Terminal C — tại `GarageManagement/backend`:**
 
-Bỏ qua lệnh này nếu đã ở backend:
+Bỏ qua lệnh này nếu bạn đã ở backend:
 
 ```cmd
 cd backend
