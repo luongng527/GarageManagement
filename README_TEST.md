@@ -55,7 +55,10 @@ npx cypress open
 Chọn **E2E Testing**, trình duyệt, sau đó chọn file test trong `cypress/e2e/`.
 
 ### 4.1. Kiểm thử UI
-
+Mở **terminal thứ ba** tại thư mục gốc `GarageManagement`để chạy UI local:
+```bash
+npm run serve:frontend
+```
 - Xác định `baseUrl` của Cypress trong `cypress.config.js` và URL frontend mà test sử dụng.
 - Nếu bài test cần frontend local, mở frontend bằng phương thức mà dự án/test đang cấu hình.
 - Chạy các spec UI trong `cypress/e2e/`.
