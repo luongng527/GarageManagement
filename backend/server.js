@@ -6,13 +6,13 @@
 
 'use strict';
 
-const express  = require('express');
-const cors     = require('cors');
-const bcrypt   = require('bcryptjs');
-const jwt      = require('jsonwebtoken');
+const express = require('express');
+const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 
-const app  = express();
+const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'autocare_dev_secret_change_me';
 
@@ -337,7 +337,7 @@ app.get('/api/vehicles', auth, async (req, res) => {
     `;
     const params = [];
     if (customer_id) { params.push(customer_id); query += ` AND v.customer_id = $${params.length}`; }
-    if (search)      { params.push(`%${search}%`); query += ` AND (v.plate ILIKE $${params.length} OR v.brand ILIKE $${params.length} OR c.name ILIKE $${params.length})`; }
+    if (search) { params.push(`%${search}%`); query += ` AND (v.plate ILIKE $${params.length} OR v.brand ILIKE $${params.length} OR c.name ILIKE $${params.length})`; }
     query += ' ORDER BY v.created_at DESC';
     const { rows } = await pool.query(query, params);
     res.json(rows);
@@ -480,7 +480,7 @@ app.get('/api/repair-orders', auth, async (req, res) => {
     `;
     const params = [];
     if (status) { params.push(status); query += ` AND ro.status = $${params.length}`; }
-    if (search)  { params.push(`%${search}%`); query += ` AND (v.plate ILIKE $${params.length} OR c.name ILIKE $${params.length})`; }
+    if (search) { params.push(`%${search}%`); query += ` AND (v.plate ILIKE $${params.length} OR c.name ILIKE $${params.length})`; }
     query += ' ORDER BY ro.created_at DESC';
     const { rows } = await pool.query(query, params);
     res.json(rows);
@@ -645,10 +645,10 @@ app.post('/api/invoices', auth, async (req, res) => {
       `SELECT COALESCE(SUM(price_at_time * qty), 0) AS total FROM order_parts WHERE order_id = $1`,
       [repair_order_id]
     );
-    const svcTotal  = Number(svcRows[0].total);
+    const svcTotal = Number(svcRows[0].total);
     const partTotal = Number(partRows[0].total);
-    const disc      = Number(discount) || 0;
-    const total     = svcTotal + partTotal - disc;
+    const disc = Number(discount) || 0;
+    const total = svcTotal + partTotal - disc;
 
     const { rows } = await client.query(`
       INSERT INTO invoices (repair_order_id, service_total, parts_total, discount, total, payment_method, created_by)
@@ -762,13 +762,13 @@ app.get('/api/reports/dashboard', auth, async (req, res) => {
       pool.query(`SELECT COUNT(*)::int AS n FROM appointments WHERE status = 'cho_xac_nhan'`),
     ]);
     res.json({
-      totalCustomers:      cust.rows[0].n,
-      totalVehicles:       veh.rows[0].n,
-      ordersToday:         ordToday.rows[0].n,
-      revenueToday:        Number(revToday.rows[0].n),
-      revenueMonth:        Number(revMonth.rows[0].n),
-      lowStockParts:       lowStock.rows[0].n,
-      pendingOrders:       pendingOrders.rows[0].n,
+      totalCustomers: cust.rows[0].n,
+      totalVehicles: veh.rows[0].n,
+      ordersToday: ordToday.rows[0].n,
+      revenueToday: Number(revToday.rows[0].n),
+      revenueMonth: Number(revMonth.rows[0].n),
+      lowStockParts: lowStock.rows[0].n,
+      pendingOrders: pendingOrders.rows[0].n,
       pendingAppointments: pendingAppts.rows[0].n,
     });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -782,13 +782,25 @@ app.get('/api/reports/revenue', auth, async (req, res) => {
     if (period === 'day') {
       // Theo ngày trong tháng
       const m = month || new Date().toISOString().slice(0, 7);
-      params = [m + '-01', m + '-31'];
+
+      if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(m)) {
+        return res.status(400).json({ error: 'Tháng không hợp lệ' });
+      }
+
+      const [y, mo] = m.split('-').map(Number);
+      const lastDay = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+
+      params = [
+        `${m}-01`,
+        `${m}-${String(lastDay).padStart(2, '0')}`
+      ];
+      
       query = `
         SELECT TO_CHAR(paid_at, 'DD/MM') AS label,
                COALESCE(SUM(total),0)::bigint AS revenue,
                COUNT(*)::int AS count
         FROM invoices
-        WHERE paid_at::date BETWEEN $1::date AND $2::date
+        WHERE paid_at >= $1::date AND paid_at < $2::date
         GROUP BY label, DATE_TRUNC('day', paid_at)
         ORDER BY DATE_TRUNC('day', paid_at)
       `;

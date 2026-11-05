@@ -1,0 +1,35 @@
+{
+  "admin": { "id": 1, "username": "admin_test", "full_name": "Admin Test", "role": "quan_ly" },
+  "staffUser": { "id": 2, "username": "staff_test", "full_name": "Staff Test", "role": "nhan_vien_le_tan" },
+  "customers": [
+    { "id": 10, "name": "Nguyễn An", "phone": "0901111111", "address": "Gia Lai", "vehicle_count": 1, "created_at": "2026-10-01T09:00:00.000Z" },
+    { "id": 11, "name": "Trần Bình", "phone": "0902222222", "address": "TP.HCM", "vehicle_count": 0, "created_at": "2026-10-02T09:00:00.000Z" }
+  ],
+  "vehicles": [
+    { "id": 20, "customer_id": 10, "customer_name": "Nguyễn An", "customer_phone": "0901111111", "plate": "81A-12345", "brand": "Toyota", "model": "Vios", "color": "Trắng", "year": 2022, "created_at": "2026-10-03T09:00:00.000Z" }
+  ],
+  "services": [
+    { "id": 30, "name": "Thay dầu", "description": "Thay nhớt động cơ", "price": 150000, "duration_min": 30, "active": true }
+  ],
+  "parts": [
+    { "id": 40, "name": "Lọc dầu", "unit": "cái", "price": 80000, "stock_qty": 2, "min_stock": 5 },
+    { "id": 41, "name": "Dầu nhớt", "unit": "chai", "price": 120000, "stock_qty": 20, "min_stock": 3 }
+  ],
+  "users": [
+    { "id": 1, "username": "admin_test", "full_name": "Admin Test", "role": "quan_ly", "phone": "0903333333", "created_at": "2026-10-01T09:00:00.000Z" },
+    { "id": 2, "username": "staff_test", "full_name": "Staff Test", "role": "nhan_vien_le_tan", "phone": "0904444444", "created_at": "2026-10-01T09:00:00.000Z" }
+  ],
+  "repairOrders": [
+    { "id": 501, "customer_id": 10, "vehicle_id": 20, "customer_name": "Nguyễn An", "customer_phone": "0901111111", "plate": "81A-12345", "brand": "Toyota", "model": "Vios", "staff_name": "Staff Test", "status": "hoan_thanh", "total_amount": 310000, "created_at": "2026-10-03T09:00:00.000Z", "services": [{ "id": 601, "service_id": 30, "service_name": "Thay dầu", "price_at_time": 150000, "qty": 1 }], "parts": [{ "id": 701, "part_id": 40, "part_name": "Lọc dầu", "unit": "cái", "price_at_time": 80000, "qty": 2 }], "invoice": null },
+    { "id": 502, "customer_id": 10, "vehicle_id": 20, "customer_name": "Nguyễn An", "customer_phone": "0901111111", "plate": "81A-12345", "brand": "Toyota", "model": "Vios", "staff_name": "Admin Test", "status": "da_thanh_toan", "total_amount": 150000, "created_at": "2026-10-02T09:00:00.000Z", "services": [{ "id": 602, "service_id": 30, "service_name": "Thay dầu", "price_at_time": 150000, "qty": 1 }], "parts": [], "invoice": { "id": 800, "repair_order_id": 502, "service_total": 150000, "parts_total": 0, "discount": 0, "total": 150000, "payment_method": "tien_mat", "paid_at": "2026-10-02T10:00:00.000Z" } }
+  ],
+  "appointments": [
+    { "id": 901, "customer_id": 10, "vehicle_id": 20, "customer_name": "Nguyễn An", "customer_phone": "0901111111", "plate": "81A-12345", "scheduled_at": "2026-11-20T09:00:00.000Z", "status": "cho_xac_nhan", "note": "Kiểm tra phanh" }
+  ],
+  "revenue": [
+    { "label": "10/2026", "revenue": 150000, "count": 1 }
+  ],
+  "topServices": [
+    { "name": "Thay dầu", "usage_count": 2, "total_revenue": 300000 }
+  ]
+}

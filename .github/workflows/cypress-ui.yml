@@ -1,0 +1,21 @@
+name: Cypress UI (Mock API)
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  cypress-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - uses: cypress-io/github-action@v6
+        with:
+          install: false
+          start: npm run serve:frontend
+          wait-on: 'http://127.0.0.1:5500'
+          command: npm run test:ui
